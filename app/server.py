@@ -1,10 +1,11 @@
 from flask import Flask, render_template, request, jsonify
 import numpy as np
-from redpitaya_scpi import scpi
+import redpitaya_scpi as scpi
+from signal_utils import generate_modulated_signal
 
 app = Flask(__name__)
-rp = scpi("192.168.1.100")  # Replace with your Red Pitaya IP
-
+IP = 'rp-f0cf17.local'
+rp = scpi.scpi(IP)
 @app.route("/")
 def home():
     return render_template("index.html")
@@ -12,22 +13,22 @@ def home():
 @app.route("/generate", methods=["POST"])
 def generate_signal():
     params = request.json
-    lf_freq = float(params["lf_freq"])
-    lf_amp = float(params["lf_amp"])
-    hf_freq = float(params["hf_freq"])
-    mod_depth = float(params["mod_depth"])
-
-    # Generate modulated signal (see signal_utils.py)
-    modulated_signal = generate_modulated_signal(lf_freq, lf_amp, hf_freq, mod_depth)
+    modulated = generate_modulated_signal(
+        params["lf_shape"],
+        float(params["lf_freq"]),
+        float(params["lf_amp"]),
+        float(params["hf_freq"]),
+        float(params["mod_depth"]),
+    )
     
-    # Send to Red Pitaya DAC
-    rp.tx_txt('GEN:RST')
-    rp.tx_txt('SOUR1:FUNC ARB')
-    rp.tx_txt('SOUR1:TRAC:DATA:DATA ' + ','.join(map(str, modulated_signal)))
-    rp.tx_txt('SOUR1:VOLT 1')
-    rp.tx_txt('OUTPUT1:STATE ON')
-
-    return jsonify({"status": "Signal generated!"})
+    # Send to selected DAC channel
+    ch = params["output_ch"]
+    rp.tx_txt(f'SOUR{ch}:FUNC ARB')
+    rp.tx_txt(f'SOUR{ch}:TRAC:DATA:DATA ' + ','.join(map(str, modulated)))
+    rp.tx_txt(f'SOUR{ch}:VOLT 1')
+    rp.tx_txt(f'OUTPUT{ch}:STATE ON')
+    
+    return jsonify({"status": f"Signal sent to DAC{ch}!"})
 
 @app.route("/capture", methods=["GET"])
 def capture_signal():

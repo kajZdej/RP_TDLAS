@@ -4,26 +4,57 @@
     <title>Red Pitaya Modulated Signal Generator</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="/static/main.js"></script>
+    <style>
+        body { font-family: Arial; margin: 20px; }
+        .control-panel { margin-bottom: 20px; }
+        .plot-container { width: 800px; height: 400px; }
+    </style>
 </head>
 <body>
-    <h1>Modulated Signal Generator</h1>
-    <div>
-        <label>LF Frequency (Hz):</label>
-        <input type="number" id="lf_freq" min="1" max="1000" value="10">
+    <h1>Red Pitaya Signal Generator + Scope</h1>
+    <div class="control-panel">
+        <h3>Low-Frequency (LF) Signal</h3>
+        <div>
+            <label>Shape:</label>
+            <select id="lf_shape">
+                <option value="triangular">Triangular</option>
+                <option value="sine">Sine</option>
+                <option value="square">Square</option>
+            </select>
+        </div>
+        <div>
+            <label>Frequency (Hz):</label>
+            <input type="number" id="lf_freq" min="1" max="1000" value="10">
+        </div>
+        <div>
+            <label>Amplitude (V):</label>
+            <input type="number" id="lf_amp" min="0.1" max="1" step="0.1" value="0.5">
+        </div>
+
+        <h3>High-Frequency (HF) Modulation</h3>
+        <div>
+            <label>Frequency (Hz):</label>
+            <input type="number" id="hf_freq" min="1000" max="100000" value="10000">
+        </div>
+        <div>
+            <label>Modulation Depth (%):</label>
+            <input type="number" id="mod_depth" min="1" max="10" value="5">
+        </div>
+
+        <h3>Output Configuration</h3>
+        <div>
+            <label>Output Channel:</label>
+            <select id="output_ch">
+                <option value="1">DAC1 (OUT1)</option>
+                <option value="2">DAC2 (OUT2)</option>
+            </select>
+        </div>
+
+        <button onclick="generateSignal()">Generate Signal</button>
+        <button onclick="updateScope()">Update Scope</button>
     </div>
-    <div>
-        <label>LF Amplitude (V):</label>
-        <input type="number" id="lf_amp" min="0.1" max="1" step="0.1" value="0.5">
-    </div>
-    <div>
-        <label>HF Modulation Freq (Hz):</label>
-        <input type="number" id="hf_freq" min="1000" max="100000" value="10000">
-    </div>
-    <div>
-        <label>Modulation Depth (%):</label>
-        <input type="number" id="mod_depth" min="1" max="10" value="5">
-    </div>
-    <button onclick="generateSignal()">Generate Signal</button>
-    <div id="oscilloscope"></div>
+
+    <h2>Oscilloscope</h2>
+    <div id="oscilloscope" class="plot-container"></div>
 </body>
 </html>
