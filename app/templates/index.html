@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Red Pitaya Modulated Signal Generator</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="/static/main.js"></script>
+</head>
+<body>
+    <h1>Modulated Signal Generator</h1>
+    <div>
+        <label>LF Frequency (Hz):</label>
+        <input type="number" id="lf_freq" min="1" max="1000" value="10">
+    </div>
+    <div>
+        <label>LF Amplitude (V):</label>
+        <input type="number" id="lf_amp" min="0.1" max="1" step="0.1" value="0.5">
+    </div>
+    <div>
+        <label>HF Modulation Freq (Hz):</label>
+        <input type="number" id="hf_freq" min="1000" max="100000" value="10000">
+    </div>
+    <div>
+        <label>Modulation Depth (%):</label>
+        <input type="number" id="mod_depth" min="1" max="10" value="5">
+    </div>
+    <button onclick="generateSignal()">Generate Signal</button>
+    <div id="oscilloscope"></div>
+</body>
+</html>
